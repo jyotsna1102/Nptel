@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admission Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        #result-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Admission Prediction</h1>
+        <form id="upload-form">
+            <input type="file" id="file-input" accept=".csv" required>
+            <button type="submit">Upload File</button>
+        </form>
+        <div id="result-container"></div>
+    </div>
+
+    <script>
+        document.getElementById('upload-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var formData = new FormData();
+            formData.append('file', document.getElementById('file-input').files[0]);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                var resultContainer = document.getElementById('result-container');
+                resultContainer.innerHTML = '<h2>Results</h2>';
+                resultContainer.innerHTML += '<p>Accuracy: ' + data.accuracy + '%</p>';
+                resultContainer.innerHTML += '<img src="' + data.plot_path + '" alt="Plot">';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
